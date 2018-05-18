@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/currnet_decoded_data"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/note"
+        />
+    <item
+        android:id="@+id/save_action_list"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/save"
+        />
+</menu>

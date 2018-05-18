@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DCDCDC"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/action_recycle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu_add_action"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
+
+        fab:layout_constraintEnd_toEndOf="parent"
+        fab:layout_constraintStart_toStartOf="parent"
+        fab:layout_constraintTop_toTopOf="parent"
+        fab:menu_animationDelayPerItem="0"
+        fab:menu_fab_label="Menu label"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/addprepare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/prepare_w"
+            fab:fab_label="Prepare"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/addwork"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/work_w"
+            fab:fab_label="Work"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/addrest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/rest_w"
+            fab:fab_label="Rest"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/addcycle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cycle_w"
+            fab:fab_label="Repeat above"
+            fab:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/addselfdefine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/clock_w"
+            fab:fab_label="Self define"
+            fab:fab_size="mini" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+    <Button
+        android:id="@+id/go_timer_activity"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="463dp"
+        android:background="@drawable/start_backgroun"
+        android:text="Start"
+        android:textColor="#ffffff"
+        fab:layout_constraintBottom_toBottomOf="parent"
+        fab:layout_constraintEnd_toEndOf="parent"
+        fab:layout_constraintStart_toStartOf="parent"
+        fab:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

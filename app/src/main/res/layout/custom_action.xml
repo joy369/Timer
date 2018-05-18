@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:padding="4dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/custom_action_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="8dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/e_"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/e_action_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="34dp"
+                android:layout_marginEnd="312dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="312dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/sym_def_app_icon" />
+
+            <EditText
+                android:id="@+id/e_action_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="77dp"
+                android:layout_marginEnd="167dp"
+                android:layout_marginLeft="95dp"
+                android:layout_marginRight="167dp"
+                android:layout_marginStart="95dp"
+                android:gravity="center"
+                android:text="Name"
+                android:hint="Name of this action"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/e_action_image"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/e_action_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="37dp"
+                android:layout_marginEnd="157dp"
+                android:layout_marginLeft="86dp"
+                android:layout_marginRight="157dp"
+                android:layout_marginStart="86dp"
+                android:gravity="center"
+                android:text="Comment"
+                android:maxLines="1"
+                android:hint="Add description"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/e_action_image"
+                app:layout_constraintTop_toBottomOf="@+id/e_action_name" />
+
+            <EditText
+                android:id="@+id/e_action_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:text="0"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:hint="10"
+                android:maxLines="1"
+                android:maxLength = "2"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.383"
+                app:layout_constraintStart_toEndOf="@+id/e_action_image"
+                app:layout_constraintTop_toBottomOf="@+id/e_action_comment" />
+
+            <TextView
+                android:id="@+id/e_action_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="112dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="112dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:text="unit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/e_action_time"
+                app:layout_constraintTop_toBottomOf="@+id/e_action_comment" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
