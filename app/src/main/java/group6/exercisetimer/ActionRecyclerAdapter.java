@@ -21,8 +21,6 @@ import java.util.Collections;
 public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ItemMoveSwipeListener {
     public ArrayList<ActionComponent> mActionList;
     public Context context;
-    private static final int MAX_NUM =999;
-    private static final int REPEAT_MAX_NUM =99;
     private static final int TYPE_DEFAULT_ACT = 0;
     private static final int TYPE_REPEAT = 1;
     private static final int TYPE_CUSTOM = 2;
@@ -181,7 +179,9 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void afterTextChanged(Editable s) {
                         mActionList.get(position).comment = s.toString();
+                        Log.e("FuckFuckFuckFuck","FuckFuckFuckFuckFuck");
                     }
+
                 };
                 ((UnediableViewHolder) holder).short_comment.addTextChangedListener(watcher_short_comment_0);
                 ((UnediableViewHolder) holder).short_comment.setTag(watcher_short_comment_0);
@@ -254,8 +254,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     }
                 }
                 ((CycleViewHolder) holder).item_num.setText(Integer.toString(a_item.getItemItemNum()));
-                ((CycleViewHolder) holder).item_num.setFilters(
-                        new InputFilter[]{new MinMaxFilter("0", String.valueOf(position))});
+//                ((CycleViewHolder) holder).item_num.setFilters(
+//                        new InputFilter[]{new MinMaxFilter("0", String.valueOf(position))});
                 TextWatcher watcher_item_num_1 = new TextWatcher() {
                     private String before_change;
 
@@ -269,12 +269,11 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        String temp_s = s.toString();
-                        if (TextUtils.isEmpty(temp_s)) {
+                        if (TextUtils.isEmpty(s.toString())) {
 //                            ((CycleViewHolder) holder).item_num.setText("");
-                            mActionList.get(position).time = Integer.parseInt("0");
-                        } else mActionList.get(position).time = Integer.parseInt(temp_s);
-                        Log.e("FUCKFUCKFUCKFUCK","FUCKFUCKFUCKFUCKFUCKFUCK");
+                            mActionList.get(position).item_num = Integer.parseInt("0");
+                        } else mActionList.get(position).item_num = Integer.parseInt(s.toString());
+
                     }
                 };
                 ((CycleViewHolder) holder).item_num.addTextChangedListener(watcher_item_num_1);

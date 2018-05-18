@@ -87,7 +87,7 @@
                 android:textSize="16sp"
                 android:hint="10"
                 android:maxLines="1"
-                android:maxLength = "2"
+                android:maxLength = "3"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

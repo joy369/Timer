@@ -124,7 +124,7 @@ public class ActionSettingActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.go_timer_activity:
-//                    Toast.makeText(context, String.valueOf(totall_t), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, String.valueOf(decodeList(mACA.mActionList).get(0).size()), Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.addprepare:
                     action_icon = getResources().getIdentifier("prepare", "drawable", context.getPackageName());
@@ -149,7 +149,7 @@ public class ActionSettingActivity extends AppCompatActivity {
                     break;
                 case R.id.addcycle:
                     action_icon = getResources().getIdentifier("cycle", "drawable", context.getPackageName());
-                    a_action = new ActionComponent("Repeat", "", 1, action_icon, 0, 1);
+                    a_action = new ActionComponent("Repeat", "", 1, action_icon, 1, 1);
 //                    A kinder setting for user, but will messup by Recycler view
 //                    if (action_list.size() < 1) a_action = new ActionComponent("Repeat", "", 1, action_icon, 0, 1);
 //                    else a_action = new ActionComponent("Repeat", "", 1, action_icon, action_list.size(), 1);
@@ -196,7 +196,8 @@ public class ActionSettingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (!compareActionLists(mACA.mActionList, original_list)) {
-            if (keyCode == KeyEvent.KEYCODE_BACK) { // Let goback HOLD ON
+            // HOLD ON! goback
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 new AlertDialog.Builder(context)
                         .setTitle("You haven't saved!")
                         .setMessage("Do you want to save the current setting?")
@@ -218,7 +219,7 @@ public class ActionSettingActivity extends AppCompatActivity {
                                 }).show();
             }
         } else finish();
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
 
     public void saveCurrentList() {
@@ -229,6 +230,7 @@ public class ActionSettingActivity extends AppCompatActivity {
         trainingLists.get(training_list_index).minute = hms_form.get(1);
         trainingLists.get(training_list_index).second = hms_form.get(2);
         String str_TLs = new Gson().toJson(trainingLists, training_list_type);
+        original_list = (ArrayList<ActionComponent>) mACA.mActionList.clone();
         preferences.edit().putString("TRAINING_LIST", str_TLs).apply();
         preferences.edit().putString("ACL_" + String.valueOf(training_list_index), str_ACs).apply();
         Toast.makeText(context, "List saved!", Toast.LENGTH_SHORT).show();
@@ -249,21 +251,55 @@ public class ActionSettingActivity extends AppCompatActivity {
         List<String> decoded_name = new ArrayList<String>();
         List<String> decoded_time = new ArrayList<String>();
         List<String> decoded_comment = new ArrayList<String>();
+//        Loop the action list
         for (int i = 0; i < current_list.size(); i++) {
-//            Deal the repeat component
+//            Deal the repeat action
             if (current_list.get(i).getItemType() == TYPE_REPEAT) {
-
-            } else {
-                decoded_name.add(current_list.get(i).getItemName());
-                decoded_time.add(String.valueOf(current_list.get(i).getItemTime()));
-                decoded_time.add(current_list.get(i).getItemComment());
+//                Deal the input equals 0
+                int temp_decoded_list_len = new Integer(0);
+                if (current_list.get(i).getItemItemNum() == 0 || current_list.get(i).getItemTime() == 0) {
+                }
+//                Deal the input of item numbers is bigger than biggest item number (Copy all previous item)
+                else if (current_list.get(i).getItemItemNum() >= i) {
+                    temp_decoded_list_len = decoded_name.size();
+//                    Repeat how many times
+                    for (int repeat_index = 0; repeat_index < current_list.get(i).getItemTime(); repeat_index++) {
+//                        add the repeated item
+                        for (int j = 0; j < temp_decoded_list_len; j++) {
+                            decoded_name.add(current_list.get(j).getItemName());
+                            decoded_time.add(String.valueOf(current_list.get(j).getItemTime()));
+                            decoded_time.add(current_list.get(j).getItemComment());
+                        }
+                    }
+                } else {
+                    temp_decoded_list_len = current_list.get(i).getItemItemNum();
+//                    Repeat how many time
+                    for (int repeat_index = 0; repeat_index < current_list.get(i).getItemTime(); repeat_index++) {
+//                        add the repeated item
+                        for (int j = 0; j < temp_decoded_list_len; j++) {
+                            decoded_name.add(current_list.get(j).getItemName());
+                            decoded_time.add(String.valueOf(current_list.get(j).getItemTime()));
+                            decoded_time.add(current_list.get(j).getItemComment());
+                        }
+                    }
+                }
+            }
+//            The item is not repeat, simple!
+            else {
+                if (current_list.get(i).getItemTime() != 0) {
+                    decoded_name.add(current_list.get(i).getItemName());
+                    decoded_time.add(String.valueOf(current_list.get(i).getItemTime()));
+                    decoded_time.add(current_list.get(i).getItemComment());
+                }
             }
         }
         decoded_data.add(decoded_name);
         decoded_data.add(decoded_time);
         decoded_data.add(decoded_comment);
         return decoded_data;
+
     }
+
 
     public static int getHMS(ArrayList<ActionComponent> current_list) {
         int totall_time = 0;
