@@ -68,13 +68,13 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public CycleViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.d_action_name);
-            counter = (TextView) itemView.findViewById(R.id.d_action_counter);
-            action_unit = (TextView) itemView.findViewById(R.id.d_action_unit);
-            short_comment = (EditText) itemView.findViewById(R.id.d_action_comment);
-            second = (EditText) itemView.findViewById(R.id.d_action_time);
+            title = (TextView) itemView.findViewById(R.id.r_action_name);
+            counter = (TextView) itemView.findViewById(R.id.r_action_counter);
+            action_unit = (TextView) itemView.findViewById(R.id.r_action_unit);
+            short_comment = (EditText) itemView.findViewById(R.id.r_action_comment);
+            second = (EditText) itemView.findViewById(R.id.r_action_time);
 //            item_num = (EditText) itemView.findViewById(R.id.r_item_num);
-            action_figue = (ImageView) itemView.findViewById(R.id.d_action_image);
+            action_figue = (ImageView) itemView.findViewById(R.id.r_action_image);
         }
     }
 
@@ -123,7 +123,7 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 return unedit_viewHolder;
             case TYPE_REPEAT:
                 View cycle_itemView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.default_action, parent, false);
+                        .inflate(R.layout.cycle_action, parent, false);
                 CycleViewHolder cycle_viewHolder = new CycleViewHolder(cycle_itemView);
                 return cycle_viewHolder;
 

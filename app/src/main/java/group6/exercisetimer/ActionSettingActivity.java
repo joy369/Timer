@@ -259,19 +259,21 @@ public class ActionSettingActivity extends AppCompatActivity {
 //            Deal the repeat action
             if (current_list.get(i).getItemType() == TYPE_REPEAT) {
 //                Deal the input equals 0
-                if (current_list.get(i).getItemItemNum() == 0 || current_list.get(i).getItemTime() == 0) {
+                if (current_list.get(i).getItemTime() == 0) {
                 } else {
-//                    Deal the input of item numbers is bigger than biggest item number (Copy all previous item)
-                    int temp_decoded_list_len =0;
-                    if(current_list.get(i).getItemItemNum() >= i)
-                        temp_decoded_list_len = decoded_name.size();
-//                    Or if item number is smaller, just use it
-                    else
-                        temp_decoded_list_len = current_list.get(i).getItemItemNum();
-                    Log.e("temp_decoded_list_len ",String.valueOf(temp_decoded_list_len));
+                    List<String> temp_name = new ArrayList<String>(decoded_name);
+                    List<String> temp_time = new ArrayList<String>(decoded_time);
+                    List<String> temp_comment = new ArrayList<String>(decoded_comment);
+
+                    for (int repeat_count = 0; repeat_count < current_list.get(i).getItemTime(); repeat_count++) {
+                        decoded_name.addAll(temp_name);
+                        decoded_time.addAll(temp_time);
+                        decoded_comment.addAll(temp_comment);
+                    }
+
                 }
             } // End of deal repeat action
-//            The item is not repeat, simple!
+//            The item is not repeat
             else {
                 if (current_list.get(i).getItemTime() != 0) {
                     decoded_name.add(current_list.get(i).getItemName());
