@@ -123,9 +123,12 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+
         ActionComponent a_item = mActionList.get(position);
         switch (holder.getItemViewType()) {
             case TYPE_DEFAULT_ACT:
+//                IMPORTANT to call setIsRecyclable! OR get WRONG position
+                ((UnediableViewHolder) holder).setIsRecyclable(false);
                 ((UnediableViewHolder) holder).title.setText(a_item.getItemName());
                 ((UnediableViewHolder) holder).action_unit.setText("Second");
                 ((UnediableViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
@@ -151,8 +154,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void afterTextChanged(Editable s) {
                         if (TextUtils.isEmpty(s.toString())) {
-//                            ((UnediableViewHolder) holder).second.setText("");
-                            mActionList.get(position).time = Integer.parseInt("0");
+                            ((UnediableViewHolder) holder).second.setText("1");
+                            mActionList.get(position).time = Integer.parseInt("1");
                         } else mActionList.get(position).time = Integer.parseInt(s.toString());
                     }
                 };
@@ -179,7 +182,7 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void afterTextChanged(Editable s) {
                         mActionList.get(position).comment = s.toString();
-                        Log.e("FuckFuckFuckFuck","FuckFuckFuckFuckFuck");
+                        Log.e("FuckFuckFuckFuck", "FuckFuckFuckFuckFuck");
                     }
 
                 };
@@ -188,6 +191,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
 
             case TYPE_REPEAT:
+//                IMPORTANT to call setIsRecyclable! OR get WRONG position
+                ((CycleViewHolder) holder).setIsRecyclable(false);
                 ((CycleViewHolder) holder).title.setText(a_item.getItemName());
                 ((CycleViewHolder) holder).action_unit.setText("time(s)");
                 ((CycleViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
@@ -213,8 +218,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void afterTextChanged(Editable s) {
                         if (TextUtils.isEmpty(s.toString())) {
-//                            ((CycleViewHolder) holder).second.setText("");
-                            mActionList.get(position).time = Integer.parseInt("0");
+                            ((CycleViewHolder) holder).second.setText("1");
+                            mActionList.get(position).time = Integer.parseInt("1");
                         } else mActionList.get(position).time = Integer.parseInt(s.toString());
                     }
                 };
@@ -270,8 +275,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void afterTextChanged(Editable s) {
                         if (TextUtils.isEmpty(s.toString())) {
-//                            ((CycleViewHolder) holder).item_num.setText("");
-                            mActionList.get(position).item_num = Integer.parseInt("0");
+                            ((CycleViewHolder) holder).item_num.setText("1");
+                            mActionList.get(position).item_num = Integer.parseInt("1");
                         } else mActionList.get(position).item_num = Integer.parseInt(s.toString());
 
                     }
@@ -281,6 +286,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
 
             case TYPE_CUSTOM:
+//                IMPORTANT to call setIsRecyclable! OR get WRONG position
+                ((EditableViewHolder) holder).setIsRecyclable(false);
                 ((EditableViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
                 ((EditableViewHolder) holder).action_unit.setText("Second");
 //                TextWatcher for custom name
@@ -329,8 +336,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     @Override
                     public void afterTextChanged(Editable s) {
                         if (TextUtils.isEmpty(s.toString())) {
-//                            ((EditableViewHolder) holder).second.setText("");
-                            mActionList.get(position).time = Integer.parseInt("0");
+                            ((EditableViewHolder) holder).second.setText("1");
+                            mActionList.get(position).time = Integer.parseInt("1");
                         } else mActionList.get(position).time = Integer.parseInt(s.toString());
                     }
                 };

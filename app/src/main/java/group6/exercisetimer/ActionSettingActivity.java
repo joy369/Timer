@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -195,7 +196,9 @@ public class ActionSettingActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (!compareActionLists(mACA.mActionList, original_list)) {
+//        Handle the crash leaded by null reference
+        if (mACA.mActionList == null || original_list==null){}
+        else if (!compareActionLists(mACA.mActionList, original_list)) {
             // HOLD ON! goback
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 new AlertDialog.Builder(context)
@@ -218,7 +221,8 @@ public class ActionSettingActivity extends AppCompatActivity {
                                     }
                                 }).show();
             }
-        } else finish();
+        }
+//        else finish();
         return super.onKeyDown(keyCode, event);
     }
 
@@ -238,6 +242,7 @@ public class ActionSettingActivity extends AppCompatActivity {
 
     public boolean compareActionLists(ArrayList<ActionComponent> a_list1,
                                       ArrayList<ActionComponent> a_list2) {
+
         if (a_list1.size() != a_list2.size()) return false;
         for (int i = 0; i < a_list1.size(); i++) {
             if (!a_list1.get(i).equals(a_list2.get(i))) return false;
@@ -255,35 +260,8 @@ public class ActionSettingActivity extends AppCompatActivity {
         for (int i = 0; i < current_list.size(); i++) {
 //            Deal the repeat action
             if (current_list.get(i).getItemType() == TYPE_REPEAT) {
-//                Deal the input equals 0
-                int temp_decoded_list_len = new Integer(0);
-                if (current_list.get(i).getItemItemNum() == 0 || current_list.get(i).getItemTime() == 0) {
-                }
-//                Deal the input of item numbers is bigger than biggest item number (Copy all previous item)
-                else if (current_list.get(i).getItemItemNum() >= i) {
-                    temp_decoded_list_len = decoded_name.size();
-//                    Repeat how many times
-                    for (int repeat_index = 0; repeat_index < current_list.get(i).getItemTime(); repeat_index++) {
-//                        add the repeated item
-                        for (int j = 0; j < temp_decoded_list_len; j++) {
-                            decoded_name.add(current_list.get(j).getItemName());
-                            decoded_time.add(String.valueOf(current_list.get(j).getItemTime()));
-                            decoded_time.add(current_list.get(j).getItemComment());
-                        }
-                    }
-                } else {
-                    temp_decoded_list_len = current_list.get(i).getItemItemNum();
-//                    Repeat how many time
-                    for (int repeat_index = 0; repeat_index < current_list.get(i).getItemTime(); repeat_index++) {
-//                        add the repeated item
-                        for (int j = 0; j < temp_decoded_list_len; j++) {
-                            decoded_name.add(current_list.get(j).getItemName());
-                            decoded_time.add(String.valueOf(current_list.get(j).getItemTime()));
-                            decoded_time.add(current_list.get(j).getItemComment());
-                        }
-                    }
-                }
-            }
+
+            } // End of deal repeat action
 //            The item is not repeat, simple!
             else {
                 if (current_list.get(i).getItemTime() != 0) {
