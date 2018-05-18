@@ -3,6 +3,7 @@ package group6.exercisetimer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -150,7 +151,7 @@ public class ActionSettingActivity extends AppCompatActivity {
                     break;
                 case R.id.addcycle:
                     action_icon = getResources().getIdentifier("cycle", "drawable", context.getPackageName());
-                    a_action = new ActionComponent("Repeat", "", 1, action_icon, 1, 1);
+                    a_action = new ActionComponent("Repeat", "", 1, action_icon, 1);
 //                    A kinder setting for user, but will messup by Recycler view
 //                    if (action_list.size() < 1) a_action = new ActionComponent("Repeat", "", 1, action_icon, 0, 1);
 //                    else a_action = new ActionComponent("Repeat", "", 1, action_icon, action_list.size(), 1);
@@ -197,18 +198,17 @@ public class ActionSettingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        Handle the crash leaded by null reference
-        if (mACA.mActionList == null || original_list==null){}
-        else if (!compareActionLists(mACA.mActionList, original_list)) {
+        if (mACA.mActionList == null || original_list == null) {
+        } else if (!compareActionLists(mACA.mActionList, original_list)) {
             // HOLD ON! goback
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 new AlertDialog.Builder(context)
-                        .setTitle("You haven't saved!")
-                        .setMessage("Do you want to save the current setting?")
+                        .setTitle("Are you sure to leave?")
+                        .setMessage("You will lose the")
                         .setPositiveButton("Yes",
                                 new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog,
-                                                        int which) {
+                                    public void onClick(DialogInterface dialog, int which) {
                                         saveCurrentList();
                                         finish();
                                     }
@@ -237,12 +237,12 @@ public class ActionSettingActivity extends AppCompatActivity {
         original_list = (ArrayList<ActionComponent>) mACA.mActionList.clone();
         preferences.edit().putString("TRAINING_LIST", str_TLs).apply();
         preferences.edit().putString("ACL_" + String.valueOf(training_list_index), str_ACs).apply();
+        final Toast toast = new Toast(getApplicationContext());
         Toast.makeText(context, "List saved!", Toast.LENGTH_SHORT).show();
     }
 
     public boolean compareActionLists(ArrayList<ActionComponent> a_list1,
                                       ArrayList<ActionComponent> a_list2) {
-
         if (a_list1.size() != a_list2.size()) return false;
         for (int i = 0; i < a_list1.size(); i++) {
             if (!a_list1.get(i).equals(a_list2.get(i))) return false;
@@ -260,7 +260,18 @@ public class ActionSettingActivity extends AppCompatActivity {
         for (int i = 0; i < current_list.size(); i++) {
 //            Deal the repeat action
             if (current_list.get(i).getItemType() == TYPE_REPEAT) {
-
+//                Deal the input equals 0
+                if (current_list.get(i).getItemItemNum() == 0 || current_list.get(i).getItemTime() == 0) {
+                } else {
+//                    Deal the input of item numbers is bigger than biggest item number (Copy all previous item)
+                    int temp_decoded_list_len =0;
+                    if(current_list.get(i).getItemItemNum() >= i)
+                        temp_decoded_list_len = decoded_name.size();
+//                    Or if item number is smaller, just use it
+                    else
+                        temp_decoded_list_len = current_list.get(i).getItemItemNum();
+                    Log.e("temp_decoded_list_len ",String.valueOf(temp_decoded_list_len));
+                }
             } // End of deal repeat action
 //            The item is not repeat, simple!
             else {

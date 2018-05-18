@@ -29,8 +29,6 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public boolean onItemMove(int fromPosition, int toPosition) {
         Collections.swap(mActionList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
-//        IMPORTANT to call ! OR get WRONG position later
-        notifyDataSetChanged();
         return true;
     }
 
@@ -38,8 +36,6 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onItemSwipe(int position) {
         mActionList.remove(position);
         notifyItemRemoved(position);
-//        IMPORTANT to call ! OR get WRONG position later
-        notifyDataSetChanged();
     }
 
     public class UnediableViewHolder extends RecyclerView.ViewHolder {
@@ -64,12 +60,12 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public CycleViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.d_action_name);
-            action_unit = (TextView) itemView.findViewById(R.id.d_action_unit);
-            short_comment = (EditText) itemView.findViewById(R.id.d_action_comment);
-            second = (EditText) itemView.findViewById(R.id.d_action_time);
-//            item_num = (EditText) itemView.findViewById(R.id.r_item_num);
-            action_figue = (ImageView) itemView.findViewById(R.id.d_action_image);
+            title = (TextView) itemView.findViewById(R.id.r_action_name);
+            action_unit = (TextView) itemView.findViewById(R.id.r_action_unit);
+            short_comment = (EditText) itemView.findViewById(R.id.r_action_comment);
+            second = (EditText) itemView.findViewById(R.id.r_action_time);
+            item_num = (EditText) itemView.findViewById(R.id.r_item_num);
+            action_figue = (ImageView) itemView.findViewById(R.id.r_action_image);
         }
     }
 
@@ -88,13 +84,13 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    public ActionRecyclerAdapter(ArrayList<ActionComponent> data) {
-        mActionList = data;
-    }
-
     public ActionRecyclerAdapter(Context context, ArrayList<ActionComponent> data) {
         mActionList = data;
         this.context = context;
+    }
+
+    public ActionRecyclerAdapter(ArrayList<ActionComponent> data) {
+        mActionList = data;
     }
 
     @Override
@@ -112,7 +108,7 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 return unedit_viewHolder;
             case TYPE_REPEAT:
                 View cycle_itemView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.default_action, parent, false);
+                        .inflate(R.layout.cycle_action, parent, false);
                 CycleViewHolder cycle_viewHolder = new CycleViewHolder(cycle_itemView);
                 return cycle_viewHolder;
 
@@ -131,8 +127,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ActionComponent a_item = mActionList.get(position);
         switch (holder.getItemViewType()) {
             case TYPE_DEFAULT_ACT:
-//                setIsRecyclable is one way to handle wrong position, but might not be helpful here
-//                ((UnediableViewHolder) holder).setIsRecyclable(false);
+//                IMPORTANT to call setIsRecyclable! OR get WRONG position
+                ((UnediableViewHolder) holder).setIsRecyclable(false);
                 ((UnediableViewHolder) holder).title.setText(a_item.getItemName());
                 ((UnediableViewHolder) holder).action_unit.setText("Second");
                 ((UnediableViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
@@ -195,11 +191,12 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 break;
 
             case TYPE_REPEAT:
-//                setIsRecyclable is one way to handle wrong position, but might not be helpful here
+//                IMPORTANT to call setIsRecyclable! OR get WRONG position
                 ((CycleViewHolder) holder).setIsRecyclable(false);
                 ((CycleViewHolder) holder).title.setText(a_item.getItemName());
                 ((CycleViewHolder) holder).action_unit.setText("time(s)");
                 ((CycleViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
+
                 //                To make text inside the item appear properly.
 //                TextWatcher for second
                 if (((CycleViewHolder) holder) instanceof CycleViewHolder) {
@@ -254,41 +251,41 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 ((CycleViewHolder) holder).short_comment.addTextChangedListener(watcher_short_comment_1);
                 ((CycleViewHolder) holder).short_comment.setTag(watcher_short_comment_1);
 
-////                TextWatcher for item_num
-//                if (((CycleViewHolder) holder) instanceof CycleViewHolder) {
-//                    if (((CycleViewHolder) holder).item_num.getTag() instanceof TextWatcher) {
-//                        ((CycleViewHolder) holder).item_num
-//                                .removeTextChangedListener((TextWatcher) ((CycleViewHolder) holder).item_num.getTag());
-//                    }
-//                }
-//                ((CycleViewHolder) holder).item_num.setText(Integer.toString(a_item.getItemItemNum()));
-////                Set range of item num
-////                ((CycleViewHolder) holder).item_num.setFilters(
-////                        new InputFilter[]{new MinMaxFilter("0", String.valueOf(position))});
-//                TextWatcher watcher_item_num_1 = new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//                        if (TextUtils.isEmpty(s.toString())) {
-////                            ((CycleViewHolder) holder).item_num.setText("0");
-//                            mActionList.get(position).item_num = Integer.parseInt("0");
-//                        } else mActionList.get(position).item_num = Integer.parseInt(s.toString());
-//
-//                    }
-//                };
-//                ((CycleViewHolder) holder).item_num.addTextChangedListener(watcher_item_num_1);
-//                ((CycleViewHolder) holder).item_num.setTag(watcher_item_num_1);
+//                TextWatcher for item_num
+                if (((CycleViewHolder) holder) instanceof CycleViewHolder) {
+                    if (((CycleViewHolder) holder).item_num.getTag() instanceof TextWatcher) {
+                        ((CycleViewHolder) holder).item_num
+                                .removeTextChangedListener((TextWatcher) ((CycleViewHolder) holder).item_num.getTag());
+                    }
+                }
+                ((CycleViewHolder) holder).item_num.setText(Integer.toString(a_item.getItemItemNum()));
+//                Set range of item num
+//                ((CycleViewHolder) holder).item_num.setFilters(
+//                        new InputFilter[]{new MinMaxFilter("0", String.valueOf(position))});
+                TextWatcher watcher_item_num_1 = new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (TextUtils.isEmpty(s.toString())) {
+//                            ((CycleViewHolder) holder).item_num.setText("0");
+                            mActionList.get(position).item_num = Integer.parseInt("0");
+                        } else mActionList.get(position).item_num = Integer.parseInt(s.toString());
+
+                    }
+                };
+                ((CycleViewHolder) holder).item_num.addTextChangedListener(watcher_item_num_1);
+                ((CycleViewHolder) holder).item_num.setTag(watcher_item_num_1);
                 break;
 
             case TYPE_CUSTOM:
-//                setIsRecyclable is one way to handle wrong position, but might not be helpful here
+//                IMPORTANT to call setIsRecyclable! OR get WRONG position
                 ((EditableViewHolder) holder).setIsRecyclable(false);
                 ((EditableViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
                 ((EditableViewHolder) holder).action_unit.setText("Second");
