@@ -3,7 +3,6 @@ package group6.exercisetimer;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -204,12 +203,12 @@ public class ActionSettingActivity extends AppCompatActivity {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 new AlertDialog.Builder(context)
                         .setTitle("Are you sure to leave?")
-                        .setMessage("You will lose the")
+                        .setMessage("You will lose the changed data")
                         .setPositiveButton("Yes",
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        saveCurrentList();
+
                                         finish();
                                     }
                                 })
@@ -217,7 +216,6 @@ public class ActionSettingActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        finish();
                                     }
                                 }).show();
             }
@@ -227,7 +225,7 @@ public class ActionSettingActivity extends AppCompatActivity {
     }
 
     public void saveCurrentList() {
-        int totall_t = getHMS(mACA.mActionList);
+        int totall_t = getTotallSecond(mACA.mActionList);
         ArrayList<String> hms_form = toHMSform(totall_t);
         String str_ACs = new Gson().toJson(action_list, action_Component_type);
         trainingLists.get(training_list_index).hour = hms_form.get(0);
@@ -290,7 +288,7 @@ public class ActionSettingActivity extends AppCompatActivity {
     }
 
 
-    public static int getHMS(ArrayList<ActionComponent> current_list) {
+    public static int getTotallSecond(ArrayList<ActionComponent> current_list) {
         int totall_time = 0;
 
         for (int i = 0; i < current_list.size(); i++) {

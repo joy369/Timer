@@ -28,9 +28,12 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
         Collections.swap(mActionList, fromPosition, toPosition);
+
         notifyItemMoved(fromPosition, toPosition);
 //        IMPORTANT to call ! OR get WRONG position later
-        notifyDataSetChanged();
+        notifyItemChanged(fromPosition);
+        notifyItemChanged(toPosition);
+
         return true;
     }
 
@@ -39,17 +42,18 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         mActionList.remove(position);
         notifyItemRemoved(position);
 //        IMPORTANT to call ! OR get WRONG position later
-        notifyDataSetChanged();
+        notifyItemRangeChanged(position, getItemCount());
     }
 
     public class UnediableViewHolder extends RecyclerView.ViewHolder {
-        TextView title, action_unit;
+        TextView title, action_unit, counter;
         EditText short_comment, second;
         ImageView action_figue;
 
         public UnediableViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.d_action_name);
+            counter = (TextView) itemView.findViewById(R.id.d_action_counter);
             action_unit = (TextView) itemView.findViewById(R.id.d_action_unit);
             short_comment = (EditText) itemView.findViewById(R.id.d_action_comment);
             second = (EditText) itemView.findViewById(R.id.d_action_time);
@@ -58,13 +62,14 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public class CycleViewHolder extends RecyclerView.ViewHolder {
-        TextView title, action_unit;
+        TextView title, action_unit, counter;
         EditText short_comment, second, item_num;
         ImageView action_figue;
 
         public CycleViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.d_action_name);
+            counter = (TextView) itemView.findViewById(R.id.d_action_counter);
             action_unit = (TextView) itemView.findViewById(R.id.d_action_unit);
             short_comment = (EditText) itemView.findViewById(R.id.d_action_comment);
             second = (EditText) itemView.findViewById(R.id.d_action_time);
@@ -74,13 +79,14 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public class EditableViewHolder extends RecyclerView.ViewHolder {
-        TextView action_unit;
+        TextView action_unit, counter;
         EditText custom_name, short_comment, second;
         ImageView action_figue;
 
         public EditableViewHolder(View itemView) {
             super(itemView);
             custom_name = (EditText) itemView.findViewById(R.id.e_action_name);
+            counter = (TextView) itemView.findViewById(R.id.e_action_counter);
             action_unit = (TextView) itemView.findViewById(R.id.e_action_unit);
             short_comment = (EditText) itemView.findViewById(R.id.e_action_comment);
             second = (EditText) itemView.findViewById(R.id.e_action_time);
@@ -95,6 +101,11 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public ActionRecyclerAdapter(Context context, ArrayList<ActionComponent> data) {
         mActionList = data;
         this.context = context;
+    }
+
+    @Override
+    public int getItemCount() {
+        return mActionList.size();
     }
 
     @Override
@@ -127,13 +138,13 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-
         ActionComponent a_item = mActionList.get(position);
         switch (holder.getItemViewType()) {
             case TYPE_DEFAULT_ACT:
 //                setIsRecyclable is one way to handle wrong position, but might not be helpful here
 //                ((UnediableViewHolder) holder).setIsRecyclable(false);
                 ((UnediableViewHolder) holder).title.setText(a_item.getItemName());
+                ((UnediableViewHolder) holder).counter.setText(String.valueOf(position+1));
                 ((UnediableViewHolder) holder).action_unit.setText("Second");
                 ((UnediableViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
 
@@ -196,8 +207,9 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             case TYPE_REPEAT:
 //                setIsRecyclable is one way to handle wrong position, but might not be helpful here
-                ((CycleViewHolder) holder).setIsRecyclable(false);
+//                ((CycleViewHolder) holder).setIsRecyclable(false);
                 ((CycleViewHolder) holder).title.setText(a_item.getItemName());
+                ((CycleViewHolder) holder).counter.setText(String.valueOf(position+1));
                 ((CycleViewHolder) holder).action_unit.setText("time(s)");
                 ((CycleViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
                 //                To make text inside the item appear properly.
@@ -289,7 +301,8 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             case TYPE_CUSTOM:
 //                setIsRecyclable is one way to handle wrong position, but might not be helpful here
-                ((EditableViewHolder) holder).setIsRecyclable(false);
+//                ((EditableViewHolder) holder).setIsRecyclable(false);
+                ((EditableViewHolder) holder).counter.setText(String.valueOf(position+1));
                 ((EditableViewHolder) holder).action_figue.setImageResource(a_item.getItemFigureID());
                 ((EditableViewHolder) holder).action_unit.setText("Second");
 //                TextWatcher for custom name
@@ -375,9 +388,5 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return mActionList.size();
-    }
 
 }
