@@ -38,6 +38,7 @@ public class ActionSettingActivity extends AppCompatActivity {
     private ActionRecyclerAdapter mACA;
     private int training_list_index;
     private String ith_ACL;
+    private ArrayList<List<String>> decoded_data;
     private ArrayList<ActionComponent> action_list = new ArrayList<ActionComponent>();
     private ArrayList<ActionComponent> loaded_action_list = new ArrayList<ActionComponent>();
     private ArrayList<ActionComponent> original_list = new ArrayList<ActionComponent>();
@@ -184,15 +185,34 @@ public class ActionSettingActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.currnet_decoded_data:
 
+
                 return true;
             case R.id.save_action_list:
                 saveCurrentList();
+                return true;
+            case R.id.reset_timer:
+                new AlertDialog.Builder(context)
+                        .setMessage("Do you want to recover to the latest saving?")
+                        .setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        action_list.clear();
+                                        action_list.addAll(original_list);
+                                        mACA.notifyDataSetChanged();
+                                    }
+                                })
+                        .setNegativeButton("No",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -233,6 +253,7 @@ public class ActionSettingActivity extends AppCompatActivity {
         trainingLists.get(training_list_index).second = hms_form.get(2);
         String str_TLs = new Gson().toJson(trainingLists, training_list_type);
         original_list = (ArrayList<ActionComponent>) mACA.mActionList.clone();
+        preferences.edit().putString("ORIGINAL_LIST", str_ACs).apply();
         preferences.edit().putString("TRAINING_LIST", str_TLs).apply();
         preferences.edit().putString("ACL_" + String.valueOf(training_list_index), str_ACs).apply();
         final Toast toast = new Toast(getApplicationContext());
@@ -264,13 +285,11 @@ public class ActionSettingActivity extends AppCompatActivity {
                     List<String> temp_name = new ArrayList<String>(decoded_name);
                     List<String> temp_time = new ArrayList<String>(decoded_time);
                     List<String> temp_comment = new ArrayList<String>(decoded_comment);
-
                     for (int repeat_count = 0; repeat_count < current_list.get(i).getItemTime(); repeat_count++) {
                         decoded_name.addAll(temp_name);
                         decoded_time.addAll(temp_time);
                         decoded_comment.addAll(temp_comment);
                     }
-
                 }
             } // End of deal repeat action
 //            The item is not repeat

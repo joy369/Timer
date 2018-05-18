@@ -82,7 +82,7 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="10"
+                android:hint="2"
                 android:inputType="numberDecimal"
                 android:maxLength="2"
                 android:maxLines="1"

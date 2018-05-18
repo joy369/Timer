@@ -2,11 +2,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/currnet_decoded_data"
+        android:id="@+id/reset_timer"
         android:title=""
         app:showAsAction="always"
-        android:icon="@drawable/note"
+        android:icon="@drawable/reset"
         />
+    <item
+        android:id="@+id/currnet_decoded_data"
+        android:icon="@drawable/note"
+        android:title=""
+        app:showAsAction="always" />
     <item
         android:id="@+id/save_action_list"
         android:title=""
