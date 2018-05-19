@@ -216,7 +216,7 @@ public class ActionSettingActivity extends AppCompatActivity {
                     bundle.putStringArrayList("name_sequence", (ArrayList<String>) decoded_data.get(name_index));
                     bundle.putStringArrayList("comment_sequence", (ArrayList<String>) decoded_data.get(comment_insex));
                     bundle.putIntArray("time_sequence", time_array);
-
+                    bundle.putInt("total_time_now", current_time);
                     toTimerIntent.putExtras(bundle);
                     startActivity(toTimerIntent);
 

@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static Type action_Component_type = new TypeToken<List<ActionComponent>>() {
     }.getType();
 
-    //    Refresh layout when setup a list
+//    Refresh layout when setup a list
     @Override
     public void onRestart() {
         super.onRestart();

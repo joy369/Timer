@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -199,6 +200,8 @@ public class TrainingListAdapter extends BaseAdapter implements View.OnClickList
         String item_time = data.get(i).getItemTime();
         holder.h_name.setText(item_name);
         holder.h_time.setText(item_time);
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(holder.h_name,TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(holder.h_time,TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
         holder.h_dots.setOnClickListener(this);
         holder.h_dots.setTag(R.id.TL_dots, i);
         return view;
