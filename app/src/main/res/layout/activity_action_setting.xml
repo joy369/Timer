@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/clock_w"
-            fab:fab_label="Self define"
+            fab:fab_label="Custom clock"
             fab:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>

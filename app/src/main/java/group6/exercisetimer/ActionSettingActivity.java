@@ -21,7 +21,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -29,7 +31,6 @@ import com.google.gson.Gson;
 
 import static group6.exercisetimer.MainActivity.action_Component_type;
 import static group6.exercisetimer.MainActivity.training_list_type;
-
 
 public class ActionSettingActivity extends AppCompatActivity {
     private static final int TYPE_REPEAT = 1;
@@ -51,6 +52,9 @@ public class ActionSettingActivity extends AppCompatActivity {
     private ItemTouchHelper itemTouchHelper;
     private com.github.clans.fab.FloatingActionButton add_work, add_rest, add_cycle, add_self_define, add_prepare;
     private com.github.clans.fab.FloatingActionMenu action_menu;
+    private final static int name_index = 0;
+    private final static int comment_insex = 1;
+    private final static int time_index = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +188,31 @@ public class ActionSettingActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.currnet_decoded_data:
+//                Get current information
+                decoded_data = decodeList(mACA.mActionList);
+                int current_time, work_num, prepare_num, rest_num, custom_clock_num;
+                current_time = work_num = prepare_num = rest_num = custom_clock_num=0;
+//                Get totalltime
+                for(String s : decoded_data.get(time_index))
+                    current_time = current_time +(Integer.valueOf(s));
+                String HMS_now = toHMSform(current_time).get(0)+":"+toHMSform(current_time).get(1)
+                        +":"+toHMSform(current_time).get(2);
+//                Count action name number
+                work_num = Collections.frequency(decoded_data.get(name_index),"Work");
+                prepare_num = Collections.frequency(decoded_data.get(name_index),"Prepare");
+                rest_num = Collections.frequency(decoded_data.get(name_index),"Rest");
+                custom_clock_num = decoded_data.get(name_index).size() - work_num - prepare_num - rest_num;
 
+//                Launch note
+                new AlertDialog.Builder(context)
+                        .setTitle("Current Setting")
+                        .setMessage("Totall time: " + HMS_now + "\n"
+                                +"Prepare:" + prepare_num + "\n"
+                                +"Work: " + work_num + "\n"
+                                +"Rest: " + prepare_num + "\n"
+                                +"Custom clock: " + custom_clock_num)
+
+                        .show();
 
                 return true;
             case R.id.save_action_list:
@@ -246,7 +274,7 @@ public class ActionSettingActivity extends AppCompatActivity {
 
     public void saveCurrentList() {
         int totall_t = getTotallSecond(mACA.mActionList);
-        ArrayList<String> hms_form = toHMSform(totall_t);
+        List<String> hms_form = toHMSform(totall_t);
         String str_ACs = new Gson().toJson(action_list, action_Component_type);
         trainingLists.get(training_list_index).hour = hms_form.get(0);
         trainingLists.get(training_list_index).minute = hms_form.get(1);
@@ -297,13 +325,13 @@ public class ActionSettingActivity extends AppCompatActivity {
                 if (current_list.get(i).getItemTime() != 0) {
                     decoded_name.add(current_list.get(i).getItemName());
                     decoded_time.add(String.valueOf(current_list.get(i).getItemTime()));
-                    decoded_time.add(current_list.get(i).getItemComment());
+                    decoded_comment.add(current_list.get(i).getItemComment());
                 }
             }
         }
         decoded_data.add(decoded_name);
-        decoded_data.add(decoded_time);
         decoded_data.add(decoded_comment);
+        decoded_data.add(decoded_time);
         return decoded_data;
 
     }
@@ -321,8 +349,8 @@ public class ActionSettingActivity extends AppCompatActivity {
         return totall_time;
     }
 
-    public static ArrayList<String> toHMSform(int totall_time) {
-        ArrayList<String> HMSform = new ArrayList<String>();
+    public static List<String> toHMSform(int totall_time) {
+        List<String> HMSform = new ArrayList<String>();
         int h, m, s;
         h = totall_time / 3600;
         m = totall_time / 60 % 60;
