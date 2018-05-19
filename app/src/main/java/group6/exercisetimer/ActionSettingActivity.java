@@ -2,6 +2,7 @@ package group6.exercisetimer;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -115,7 +116,7 @@ public class ActionSettingActivity extends AppCompatActivity {
         mACA = new ActionRecyclerAdapter(context, action_list);
         action_recycler_view.setAdapter(mACA);
 
-//         new 1個ItemTouchHelper並與RecycleView做關聯
+//         initializr ItemTouchHelper and connect RecycleView
         itemTouchHelper = new ItemTouchHelper(new ActionItemTouchHelperCallback(mACA));
         itemTouchHelper.attachToRecyclerView(action_recycler_view);
 
@@ -124,14 +125,11 @@ public class ActionSettingActivity extends AppCompatActivity {
 
     }
 
-    //    Click for add
+    //    Click for add action and to next timer page
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.go_timer_activity:
-                    Toast.makeText(context, String.valueOf(decodeList(mACA.mActionList).get(0).size()), Toast.LENGTH_SHORT).show();
-                    break;
                 case R.id.addprepare:
                     action_icon = getResources().getIdentifier("prepare", "drawable", context.getPackageName());
                     a_action = new ActionComponent("Prepare", "", 10, action_icon, 0);
@@ -170,6 +168,59 @@ public class ActionSettingActivity extends AppCompatActivity {
                     mACA.notifyDataSetChanged();
                     action_recycler_view.smoothScrollToPosition(action_list.size() - 1);
                     break;
+                case R.id.go_timer_activity:
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//                    When haven't save
+                    if (!compareActionLists(original_list, mACA.mActionList)) {
+                        alertDialog.setTitle("You haven't save!");
+                        alertDialog.setMessage("Please go back and save");
+                        alertDialog.setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).show();
+                        break;
+                    }
+//
+//                    When totall time = 0
+                    decoded_data = decodeList(mACA.mActionList);
+                    int time_array[] = new int[decoded_data.get(time_index).size()];
+
+                    int current_time = 0;
+                    for (int i = 0; i < decoded_data.get(time_index).size(); i++){
+                        current_time = current_time + Integer.valueOf(decoded_data.get(time_index).get(i));
+                        time_array[i] = Integer.valueOf(decoded_data.get(time_index).get(i));
+                    }
+//                    for (String s : decoded_data.get(time_index)){
+//                        time_list.add(Integer.valueOf(s));
+//                        current_time = current_time + Integer.valueOf(s);
+//                    }
+                    if (current_time == 0) {
+                        alertDialog.setTitle("The total time of this timer is zero");
+                        alertDialog.setMessage("Please go back and set again");
+                        alertDialog.setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).show();
+                        break;
+                    }
+//                    Send decoded data
+//                 Initialize Intent to jump to Timer Activity
+                    Intent toTimerIntent = new Intent(ActionSettingActivity.this, TimerActivity.class);
+
+//                Send the needed data (Total name, comment and time sequence)
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArrayList("name_sequence", (ArrayList<String>) decoded_data.get(name_index));
+                    bundle.putStringArrayList("comment_sequence", (ArrayList<String>) decoded_data.get(comment_insex));
+                    bundle.putIntArray("time_sequence", time_array);
+
+                    toTimerIntent.putExtras(bundle);
+                    startActivity(toTimerIntent);
+
+                    break;
 
             }
         }
@@ -191,29 +242,28 @@ public class ActionSettingActivity extends AppCompatActivity {
 //                Get current information
                 decoded_data = decodeList(mACA.mActionList);
                 int current_time, work_num, prepare_num, rest_num, custom_clock_num;
-                current_time = work_num = prepare_num = rest_num = custom_clock_num=0;
+                current_time = work_num = prepare_num = rest_num = custom_clock_num = 0;
 //                Get totalltime
-                for(String s : decoded_data.get(time_index))
-                    current_time = current_time +(Integer.valueOf(s));
-                String HMS_now = toHMSform(current_time).get(0)+":"+toHMSform(current_time).get(1)
-                        +":"+toHMSform(current_time).get(2);
+                for (String s : decoded_data.get(time_index))
+                    current_time = current_time + (Integer.valueOf(s));
+                String HMS_now = toHMSform(current_time).get(0) + ":" + toHMSform(current_time).get(1)
+                        + ":" + toHMSform(current_time).get(2);
 //                Count action name number
-                work_num = Collections.frequency(decoded_data.get(name_index),"Work");
-                prepare_num = Collections.frequency(decoded_data.get(name_index),"Prepare");
-                rest_num = Collections.frequency(decoded_data.get(name_index),"Rest");
+                work_num = Collections.frequency(decoded_data.get(name_index), "Work");
+                prepare_num = Collections.frequency(decoded_data.get(name_index), "Prepare");
+                rest_num = Collections.frequency(decoded_data.get(name_index), "Rest");
                 custom_clock_num = decoded_data.get(name_index).size() - work_num - prepare_num - rest_num;
 
 //                Launch note
                 new AlertDialog.Builder(context)
                         .setTitle("Current Setting")
                         .setMessage("Totall time: " + HMS_now + "\n"
-                                +"Prepare:" + prepare_num + "\n"
-                                +"Work: " + work_num + "\n"
-                                +"Rest: " + prepare_num + "\n"
-                                +"Custom clock: " + custom_clock_num)
+                                + "Prepare:" + prepare_num + "\n"
+                                + "Work: " + work_num + "\n"
+                                + "Rest: " + prepare_num + "\n"
+                                + "Custom clock: " + custom_clock_num)
 
                         .show();
-
                 return true;
             case R.id.save_action_list:
                 saveCurrentList();
@@ -245,8 +295,9 @@ public class ActionSettingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        Handle the crash leaded by null reference
-        if (mACA.mActionList == null || original_list == null) {
-        } else if (!compareActionLists(mACA.mActionList, original_list)) {
+//        if (mACA.mActionList == null || original_list == null) { }
+//        else if (!compareActionLists(mACA.mActionList, original_list)) {
+        if (!compareActionLists(mACA.mActionList, original_list)) {
             // HOLD ON! goback
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 new AlertDialog.Builder(context)
@@ -256,7 +307,6 @@ public class ActionSettingActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
                                         finish();
                                     }
                                 })
@@ -290,7 +340,9 @@ public class ActionSettingActivity extends AppCompatActivity {
 
     public boolean compareActionLists(ArrayList<ActionComponent> a_list1,
                                       ArrayList<ActionComponent> a_list2) {
-        if (a_list1.size() != a_list2.size()) return false;
+        if (a_list1 == null) a_list1 = new ArrayList<ActionComponent>();
+        if (a_list2 == null) a_list2 = new ArrayList<ActionComponent>();
+        else if (a_list1.size() != a_list2.size()) return false;
         for (int i = 0; i < a_list1.size(); i++) {
             if (!a_list1.get(i).equals(a_list2.get(i))) return false;
         }

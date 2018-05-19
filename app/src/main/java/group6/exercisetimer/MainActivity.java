@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                Toast.makeText(MainActivity.this, "我是item点击事件 i = " + position + "l = " + id, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "The ith item i = " + position + "l = " + id, Toast.LENGTH_SHORT).show();
 
 //                 Initialize Intent to jump to Action Setting Activity
                 Intent toActionSettingIntent = new Intent(MainActivity.this, ActionSettingActivity.class);
@@ -95,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 bundle.putParcelableArrayList("bundled_TLs", init_list);
                 bundle.putInt("current_item_index", position);
                 toActionSettingIntent.putExtras(bundle);
-
-                // 使用準備好的 Intent 來開啟新的頁面
                 startActivity(toActionSettingIntent);
             }
         });
