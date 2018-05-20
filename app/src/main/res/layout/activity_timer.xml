@@ -84,7 +84,7 @@
             android:progressDrawable="@drawable/drawable_circle_white"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintTop_toTopOf="parent"
-            android:rotation="90"
+            android:rotation="-90"
 
             custom:layout_constraintBottom_toBottomOf="parent"
             custom:layout_constraintEnd_toEndOf="parent"
@@ -136,11 +136,11 @@
             android:layout_marginRight="151dp"
             android:layout_marginStart="152dp"
 
+            app:srcCompat="@drawable/pause"
             custom:layout_constraintBottom_toBottomOf="parent"
             custom:layout_constraintEnd_toEndOf="parent"
             custom:layout_constraintStart_toStartOf="parent"
-            custom:layout_constraintTop_toTopOf="parent"
-            custom:srcCompat="@drawable/play" />
+            custom:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/reset_timer"

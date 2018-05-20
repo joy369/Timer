@@ -11,10 +11,10 @@ import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.media.MediaPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -34,14 +34,14 @@ public class TimerActivity extends AppCompatActivity {
     private static final String RED = "#e74c3c";
     private ValueAnimator colorAnimation;
     private List<String> aciton_names, action_commnets, action_backbrounds;
-    private int[] action_timers, soundIds;
+    private int[] action_timers, timer_soundIds;
     private int totall_time, soundId;
     private int timer_index = 0;
     private long remaing_time;
-    private boolean isPaused;
+    private boolean isPaused = false;
     private Bundle from_ACS_bundle;
     private ActionBar actionBar;
-    private TextView action_title_now, action_comment_now, action_time_now, left_item_view;
+    private TextView action_name_now, action_comment_now, action_time_now, left_action_view;
     private ImageView timer_start_pause, timer_reset, timer_back, timer_next;
     private ConstraintLayout timer_activity_layout;
     private CountDownTimer countDownTimer;
@@ -59,21 +59,20 @@ public class TimerActivity extends AppCompatActivity {
         action_timers = from_ACS_bundle.getIntArray("time_sequence");
         totall_time = from_ACS_bundle.getInt("total_time_now");
         action_backbrounds = new ArrayList<String>();
-        soundIds = new int[action_timers.length];
+        timer_soundIds = new int[action_timers.length];
 //        make the BG list and sound array for the counter
         makeBGnSoundIDList();
 
 //        Link veiw
         timer_activity_layout = (ConstraintLayout) findViewById(R.id.timer_activity_layout);
-        action_title_now = (TextView) findViewById(R.id.timer_title_now);
-        left_item_view = (TextView) findViewById(R.id.left_item);
+        action_name_now = (TextView) findViewById(R.id.timer_title_now);
+        left_action_view = (TextView) findViewById(R.id.left_item);
         action_time_now = (TextView) findViewById(R.id.timer_time_now);
         action_comment_now = (TextView) findViewById(R.id.timer_comment_now);
         progressBarCircle = (ProgressBar) findViewById(R.id.time_progress);
-        action_title_now.setText("SO HARD");
-        TextViewCompat.setAutoSizeTextTypeWithDefaults(action_title_now, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(action_name_now, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
         TextViewCompat.setAutoSizeTextTypeWithDefaults(action_time_now, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-        TextViewCompat.setAutoSizeTextTypeWithDefaults(left_item_view, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(left_action_view, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
         timer_next = (ImageView) findViewById(R.id.click_next);
         timer_back = (ImageView) findViewById(R.id.click_back);
         timer_reset = (ImageView) findViewById(R.id.reset_timer);
@@ -88,53 +87,63 @@ public class TimerActivity extends AppCompatActivity {
         actionBar.hide();
 
 //            Initial the timer view by the first action item
-        action_title_now.setText(aciton_names.get(0));
+        action_name_now.setText(aciton_names.get(0));
         action_comment_now.setText(action_commnets.get(0));
         timer_activity_layout.setBackgroundColor(Color.parseColor(action_backbrounds.get(0)));
-        left_item_view.setText(String.valueOf(timer_index+1)+"/"+String.valueOf(aciton_names.size()));
-
-
-
-//        Set currnet maximun
+        left_action_view.setText(String.valueOf(timer_index + 1) + "/" + String.valueOf(aciton_names.size()));
         setProgressBarValues(action_timers[0]);
-        countDownTimer = new CountDownTimer((long) totall_time * SECOND, 10) {
-            public void onTick(long millisUntilFinished) {
-                long have_run = totall_time * SECOND - millisUntilFinished;
-                Log.i("have_run", String.valueOf(have_run / SECOND));
-//                Change the view for the next action
-                if (timer_index != action_timers.length - 1 && (int) (have_run / SECOND) >= action_timers[timer_index]) {
-                    timer_index++;
-                    action_title_now.setText(aciton_names.get(timer_index));
-                    action_comment_now.setText(action_commnets.get(timer_index));
-//                    note the + 1 here because user's initial point is 1 but not 0
-                    left_item_view.setText(String.valueOf(timer_index+1)+"/"+String.valueOf(aciton_names.size()));
-                    changeBG(action_backbrounds.get(timer_index),action_backbrounds.get(timer_index));
-                    playSound(soundIds[timer_index]);
-                }
-                if (millisUntilFinished <=1*SECOND) millisUntilFinished = 10*SECOND;
+
+//        Start timers
+        createTimers();
+
+    }
+
+    //    Create and startsequence timers
+    private void createTimers() {
+        if (timer_index != action_timers.length) {
+            setupview();
+//            check for pause
+            int timer_input_time;
+            if (isPaused) timer_input_time = (int) (remaing_time / SECOND);
+            else timer_input_time = action_timers[timer_index];
+            countDownTimer = new CountDownTimer((long) timer_input_time * SECOND, 10) {
+                public void onTick(long millisUntilFinished) {
 //                +1 for showing the precise number
-                action_time_now.setText(String.valueOf(1 + millisUntilFinished / SECOND));
-//                progressBarCircle.setProgress((int)(TimeUnit.MILLISECONDS).toSeconds(millisUntilFinished));
+                    action_time_now.setText(String.valueOf(1 + millisUntilFinished / SECOND));
+                    progressBarCircle.setProgress((int) (TimeUnit.MILLISECONDS).toSeconds(millisUntilFinished));
+                    remaing_time = millisUntilFinished;
+                }
 
-            }
+                public void onFinish() {
+                    action_time_now.setText(String.valueOf(0));
+                    countDownTimer.cancel();
+                    timer_index++;
+                    createTimers();
 
-            public void onFinish() {
-//                Set the sound
-//                countDownTimer.cancel();
-//                soundId = R.raw.finishbell;
-//                playSound(soundId);
-//                progressBarCircle.setVisibility(View.GONE);
-//                action_comment_now.setVisibility(View.GONE);
-//                action_title_now.setVisibility(View.GONE);
-//                timer_back.setVisibility(View.GONE);
-//                timer_next.setVisibility(View.GONE);
-//                timer_reset.setVisibility(View.GONE);
-//                timer_start_pause.setVisibility(View.GONE);
-//                left_item_view.setVisibility(View.GONE);
-//
-//                action_time_now.setText("Finish!");
-            }
-        }.start();
+                }
+            }.start();
+        } else {
+
+        }
+    }
+
+    //    Set up the view for each timer
+    private void setupview() {
+        action_name_now.setText(aciton_names.get(timer_index));
+        action_comment_now.setText(action_commnets.get(timer_index));
+        left_action_view.setText(String.valueOf(timer_index + 1) + "/" + String.valueOf(aciton_names.size()));
+        if (timer_index == 0) {
+            timer_activity_layout.setBackgroundColor(Color.parseColor(action_backbrounds.get(timer_index)));
+        } else {
+            changeBG(action_backbrounds.get(timer_index - 1), action_backbrounds.get(timer_index));
+        }
+//        Check isPuased, so that timer timer won't be refresh and make too much sound
+        if (!isPaused) {
+            playSound(timer_soundIds[timer_index]);
+            progressBarCircle.setMax(action_timers[timer_index]);
+            progressBarCircle.setProgress(action_timers[timer_index]);
+        }
+
 
     }
 
@@ -142,7 +151,7 @@ public class TimerActivity extends AppCompatActivity {
     private void changeBG(String from_color, String to_color) {
         colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator()
                 , Color.parseColor(from_color), Color.parseColor(to_color));
-        colorAnimation.setDuration(800); // milliseconds
+        colorAnimation.setDuration(400); // milliseconds
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animator) {
@@ -164,52 +173,10 @@ public class TimerActivity extends AppCompatActivity {
         });
     }
 
+    //    Initialize progressbar
     private void setProgressBarValues(int timer_duration) {
         progressBarCircle.setMax(timer_duration);
         progressBarCircle.setProgress(timer_duration);
-    }
-
-    private void startCountDownTimer(long timer_duration, String timer_type, int sound_now) {
-
-        countDownTimer = new CountDownTimer(timer_duration * SECOND, SECOND) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-//                Set up timer and progresscircle
-                action_time_now.setText(String.valueOf(millisUntilFinished / SECOND));
-//                progressBarCircle.setProgress((int) (millisUntilFinished / SECOND));
-            }
-
-            @Override
-            public void onFinish() {
-            }
-
-        }.start();
-        countDownTimer.start();
-    }
-
-    private void start_pause(long timer_duration, String timer_type, int sound_now) {
-        if (isPaused == true) {
-//
-//
-//            // call to initialize the progress bar values
-//            setProgressBarValues(countDownTimer.onTick());
-//            // showing the reset icon
-//            imageViewReset.setVisibility(View.VISIBLE);
-//            // changing play icon to stop icon
-//            imageViewStartStop.setImageResource(R.drawable.icon_stop);
-//            // making edit text not editable
-//            editTextMinute.setEnabled(false);
-//            // changing the timer status to started
-//            timerStatus = TimerStatus.STARTED;
-//            // call to start the count down timer
-            startCountDownTimer(timer_duration, timer_type, sound_now);
-
-        } else {
-            // changing stop icon to start icon
-//            stopCountDownTimer();
-
-        }
-
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
@@ -217,12 +184,23 @@ public class TimerActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.start_pause:
+                    timer_start_pause.setImageResource(R.drawable.play);
+//                    this animation make user can notice the button is clicked
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
-
+                    if (isPaused) {
+//                        In the first time, although the flag is paused is false, the initial timer is alive
+                        if (timer_index==0) countDownTimer.cancel();
+                        createTimers();
+                        timer_start_pause.setImageResource(R.drawable.play);
+                        isPaused = false;
+                    } else {
+                        timer_start_pause.setImageResource(R.drawable.pause);
+                        countDownTimer.cancel();
+                        isPaused = true;
+                    }
                     break;
                 case R.id.reset_timer:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
-//                reset();
                     break;
                 case R.id.click_next:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
@@ -242,20 +220,21 @@ public class TimerActivity extends AppCompatActivity {
     }
 
 
+    //    make the background color and sondID list for the sequence timer
     private void makeBGnSoundIDList() {
         for (int i = 0; i < aciton_names.size(); i++) {
             if (aciton_names.get(i).equals("Work")) {
                 action_backbrounds.add(RED);
-                soundIds[i] = R.raw.whistle;
+                timer_soundIds[i] = R.raw.whistle;
             } else if (aciton_names.get(i).equals("Rest")) {
                 action_backbrounds.add(BLUE);
-                soundIds[i] = R.raw.rest_ding;
+                timer_soundIds[i] = R.raw.rest_ding;
             } else if (aciton_names.get(i).equals("Prepare")) {
                 action_backbrounds.add(ORANGE);
-                soundIds[i] = R.raw.rest_ding;
+                timer_soundIds[i] = R.raw.rest_ding;
             } else {
                 action_backbrounds.add(GREEN);
-                soundIds[i] = R.raw.whistle;
+                timer_soundIds[i] = R.raw.whistle;
             }
         }
     }
