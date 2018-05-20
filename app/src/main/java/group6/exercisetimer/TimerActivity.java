@@ -17,13 +17,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TimerActivity extends AppCompatActivity {
     private Context context = this;
@@ -32,6 +30,7 @@ public class TimerActivity extends AppCompatActivity {
     private static final String GREEN = "#28B463";
     private static final String BLUE = "#3498DB";
     private static final String RED = "#e74c3c";
+    private static final String PROJECT_BLUE = "#FF3F51B5";
     private ValueAnimator colorAnimation;
     private List<String> aciton_names, action_commnets, action_backbrounds;
     private int[] action_timers, timer_soundIds;
@@ -39,10 +38,11 @@ public class TimerActivity extends AppCompatActivity {
     private int timer_index = 0;
     private long remaing_time;
     private boolean isPaused = false;
+    private boolean by_button = false;
     private Bundle from_ACS_bundle;
     private ActionBar actionBar;
     private TextView action_name_now, action_comment_now, action_time_now, left_action_view;
-    private ImageView timer_start_pause, timer_reset, timer_back, timer_next;
+    private ImageView timer_start, timer_reset, timer_back, timer_next, timer_pause;
     private ConstraintLayout timer_activity_layout;
     private CountDownTimer countDownTimer;
     private ProgressBar progressBarCircle;
@@ -76,8 +76,10 @@ public class TimerActivity extends AppCompatActivity {
         timer_next = (ImageView) findViewById(R.id.click_next);
         timer_back = (ImageView) findViewById(R.id.click_back);
         timer_reset = (ImageView) findViewById(R.id.reset_timer);
-        timer_start_pause = (ImageView) findViewById(R.id.start_pause);
-        timer_start_pause.setOnClickListener(clickListener);
+        timer_start = (ImageView) findViewById(R.id.start);
+        timer_pause = (ImageView) findViewById(R.id.pause);
+        timer_start.setOnClickListener(clickListener);
+        timer_pause.setOnClickListener(clickListener);
         timer_next.setOnClickListener(clickListener);
         timer_back.setOnClickListener(clickListener);
         timer_reset.setOnClickListener(clickListener);
@@ -123,7 +125,7 @@ public class TimerActivity extends AppCompatActivity {
                 }
             }.start();
         } else {
-
+            allFinish();
         }
     }
 
@@ -137,14 +139,14 @@ public class TimerActivity extends AppCompatActivity {
         } else {
             changeBG(action_backbrounds.get(timer_index - 1), action_backbrounds.get(timer_index));
         }
-//        Check isPuased, so that timer timer won't be refresh and make too much sound
-        if (!isPaused) {
+//        When getinto here by reset, back and next, do not make soud
+        if (by_button) by_button = false;
+            //        Check isPuased, so that timer timer won't be refresh and make too much sound
+        else if (!isPaused) {
             playSound(timer_soundIds[timer_index]);
             progressBarCircle.setMax(action_timers[timer_index]);
             progressBarCircle.setProgress(action_timers[timer_index]);
         }
-
-
     }
 
     //    Chnage color of background
@@ -179,34 +181,63 @@ public class TimerActivity extends AppCompatActivity {
         progressBarCircle.setProgress(timer_duration);
     }
 
+//    Set finish view
+    private void allFinish() {
+        setProgressBarValues(0);
+        soundId = R.raw.finishbell;
+        if (by_button) by_button = false;
+        else playSound(soundId);
+        if (countDownTimer != null) countDownTimer.cancel();
+        action_name_now.setText("Finish");
+        action_time_now.setText("0");
+        changeBG(action_backbrounds.get(action_timers.length-1), PROJECT_BLUE);
+//        Reassign index so that if user click back will start from the last timer
+        timer_index = action_timers.length;
+    }
+
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.start_pause:
-                    timer_start_pause.setImageResource(R.drawable.play);
+                case R.id.start:
 //                    this animation make user can notice the button is clicked
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
                     if (isPaused) {
-//                        In the first time, although the flag is paused is false, the initial timer is alive
-                        if (timer_index==0) countDownTimer.cancel();
                         createTimers();
-                        timer_start_pause.setImageResource(R.drawable.play);
                         isPaused = false;
                     } else {
-                        timer_start_pause.setImageResource(R.drawable.pause);
+                    }
+                    break;
+                case R.id.pause:
+                    v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
+                    if (isPaused) {
+                    } else {
                         countDownTimer.cancel();
                         isPaused = true;
                     }
                     break;
                 case R.id.reset_timer:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
+                    countDownTimer.cancel();
+                    by_button = true;
+                    createTimers();
                     break;
                 case R.id.click_next:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
+                    by_button = true;
+                    if (timer_index >= action_timers.length - 1) {
+                        allFinish();
+                        break;
+                    } else timer_index++;
+                    countDownTimer.cancel();
+                    createTimers();
                     break;
                 case R.id.click_back:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
+                    if (timer_index != 0) timer_index--;
+                    countDownTimer.cancel();
+                    by_button = true;
+                    createTimers();
                     break;
             }
         }
