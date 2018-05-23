@@ -295,7 +295,9 @@ public class ActionSettingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        Handle the crash leaded by null reference
-//        if (mACA.mActionList == null || original_list == null) { }
+        if (mACA.mActionList == null && original_list != null) { return super.onKeyDown(keyCode, event);}
+        else if (mACA.mActionList != null && original_list == null) { return super.onKeyDown(keyCode, event);}
+        else if (mACA.mActionList == null && original_list == null) { return super.onKeyDown(keyCode, event);}
 //        else if (!compareActionLists(mACA.mActionList, original_list)) {
         if (!compareActionLists(mACA.mActionList, original_list)) {
             // HOLD ON! goback
@@ -318,7 +320,6 @@ public class ActionSettingActivity extends AppCompatActivity {
                                 }).show();
             }
         }
-//        else finish();
         return super.onKeyDown(keyCode, event);
     }
 
