@@ -103,11 +103,18 @@ public class TimerActivity extends AppCompatActivity {
     //    Create and startsequence timers
     private void createTimers() {
         if (timer_index != action_timers.length) {
+
             setupview();
 //            check for pause
             int timer_input_time;
-            if (isPaused) timer_input_time = (int) (remaing_time / SECOND);
-            else timer_input_time = action_timers[timer_index];
+            if (isPaused) {
+                timer_input_time = (int) (remaing_time / SECOND);
+                progressBarCircle.setMax(action_timers[timer_index]);
+                progressBarCircle.setProgress((int) (remaing_time / SECOND));
+            } else {
+                timer_input_time = action_timers[timer_index];
+                setProgressBarValues(action_timers[timer_index]);
+            }
             countDownTimer = new CountDownTimer((long) timer_input_time * SECOND, 10) {
                 public void onTick(long millisUntilFinished) {
 //                +1 for showing the precise number
@@ -181,7 +188,7 @@ public class TimerActivity extends AppCompatActivity {
         progressBarCircle.setProgress(timer_duration);
     }
 
-//    Set finish view
+    //    Set finish view
     private void allFinish() {
         setProgressBarValues(0);
         soundId = R.raw.finishbell;
@@ -190,7 +197,7 @@ public class TimerActivity extends AppCompatActivity {
         if (countDownTimer != null) countDownTimer.cancel();
         action_name_now.setText("Finish");
         action_time_now.setText("0");
-        changeBG(action_backbrounds.get(action_timers.length-1), PROJECT_BLUE);
+        changeBG(action_backbrounds.get(action_timers.length - 1), PROJECT_BLUE);
 //        Reassign index so that if user click back will start from the last timer
         timer_index = action_timers.length;
     }
@@ -202,7 +209,9 @@ public class TimerActivity extends AppCompatActivity {
                 case R.id.start:
 //                    this animation make user can notice the button is clicked
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
+
                     if (isPaused) {
+                        countDownTimer.cancel();
                         createTimers();
                         isPaused = false;
                     } else {
@@ -210,32 +219,41 @@ public class TimerActivity extends AppCompatActivity {
                     break;
                 case R.id.pause:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
+                    countDownTimer.cancel();
                     if (isPaused) {
                     } else {
-                        countDownTimer.cancel();
                         isPaused = true;
                     }
                     break;
                 case R.id.reset_timer:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
                     countDownTimer.cancel();
+                    if (isPaused) {
+                        isPaused = false;
+                    }
                     by_button = true;
                     createTimers();
                     break;
                 case R.id.click_next:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
                     by_button = true;
+                    countDownTimer.cancel();
+                    if (isPaused) {
+                        isPaused = false;
+                    }
                     if (timer_index >= action_timers.length - 1) {
                         allFinish();
                         break;
                     } else timer_index++;
-                    countDownTimer.cancel();
                     createTimers();
                     break;
                 case R.id.click_back:
                     v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.image_onclick));
-                    if (timer_index != 0) timer_index--;
                     countDownTimer.cancel();
+                    if (isPaused) {
+                        isPaused = false;
+                    }
+                    if (timer_index != 0) timer_index--;
                     by_button = true;
                     createTimers();
                     break;

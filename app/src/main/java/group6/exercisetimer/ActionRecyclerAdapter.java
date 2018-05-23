@@ -171,7 +171,7 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         if (TextUtils.isEmpty(s.toString())) {
 //                            ((UnediableViewHolder) holder).second.setText("0");
                             mActionList.get(position).time = Integer.parseInt("0");
-                        } else mActionList.get(position).time = Integer.parseInt(s.toString());
+                        } else mActionList.get(position).time = (int) Float.parseFloat(s.toString());
                     }
                 };
                 ((UnediableViewHolder) holder).second.addTextChangedListener(watcher_second_0);
@@ -235,7 +235,7 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         if (TextUtils.isEmpty(s.toString())) {
 //                            ((CycleViewHolder) holder).second.setText("");
                             mActionList.get(position).time = Integer.parseInt("0");
-                        } else mActionList.get(position).time = Integer.parseInt(s.toString());
+                        } else mActionList.get(position).time = (int)Float.parseFloat(s.toString());
                     }
                 };
                 ((CycleViewHolder) holder).second.addTextChangedListener(watcher_second_1);
@@ -353,7 +353,7 @@ public class ActionRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                         if (TextUtils.isEmpty(s.toString())) {
 //                            ((EditableViewHolder) holder).second.setText("0");
                             mActionList.get(position).time = Integer.parseInt("0");
-                        } else mActionList.get(position).time = Integer.parseInt(s.toString());
+                        } else mActionList.get(position).time = (int) Float.parseFloat(s.toString());
                     }
                 };
                 ((EditableViewHolder) holder).second.addTextChangedListener(watcher_second_2);
