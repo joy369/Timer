@@ -35,13 +35,16 @@
 
             <TextView
                 android:id="@+id/TL_time"
-                android:layout_width="wrap_content"
+                android:layout_width="105dp"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="3dp"
+                android:layout_marginStart="3dp"
+                android:autoSizeTextType="uniform"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="time"
-                android:autoSizeTextType="uniform"
-                app:layout_constraintRight_toLeftOf="@+id/TL_dots" />
+                app:layout_constraintRight_toLeftOf="@+id/TL_dots"
+                app:layout_constraintStart_toEndOf="@+id/TL_name" />
 
             <ImageView
                 android:id="@+id/TL_dots"
