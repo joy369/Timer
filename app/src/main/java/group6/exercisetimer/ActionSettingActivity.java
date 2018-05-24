@@ -295,13 +295,11 @@ public class ActionSettingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        Handle the crash leaded by null reference
-        boolean one_is_null =false;
-
-        if (mACA.mActionList.size() == 0 && original_list != null) { one_is_null=true;}
-        else if (mACA.mActionList.size() > 0 && original_list == null) { one_is_null=true;}
-        else if (mACA.mActionList.size() == 0 && original_list == null) { one_is_null=false;}
+        if (mACA.mActionList == null && original_list != null) { return super.onKeyDown(keyCode, event);}
+        else if (mACA.mActionList != null && original_list == null) { return super.onKeyDown(keyCode, event);}
+        else if (mACA.mActionList == null && original_list == null) { return super.onKeyDown(keyCode, event);}
 //        else if (!compareActionLists(mACA.mActionList, original_list)) {
-        if (!compareActionLists(mACA.mActionList, original_list ) || one_is_null) {
+        if (!compareActionLists(mACA.mActionList, original_list)) {
             // HOLD ON! goback
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 new AlertDialog.Builder(context)
