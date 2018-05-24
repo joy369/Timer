@@ -297,9 +297,9 @@ public class ActionSettingActivity extends AppCompatActivity {
 //        Handle the crash leaded by null reference
         boolean one_is_null =false;
 
-        if (mACA.mActionList == null && original_list != null) { one_is_null=true;}
-        else if (mACA.mActionList != null && original_list == null) { one_is_null=true;}
-        else if (mACA.mActionList == null && original_list == null) { one_is_null=false;}
+        if (mACA.mActionList.size() == 0 && original_list != null) { one_is_null=true;}
+        else if (mACA.mActionList.size() > 0 && original_list == null) { one_is_null=true;}
+        else if (mACA.mActionList.size() == 0 && original_list == null) { one_is_null=false;}
 //        else if (!compareActionLists(mACA.mActionList, original_list)) {
         if (!compareActionLists(mACA.mActionList, original_list ) || one_is_null) {
             // HOLD ON! goback
