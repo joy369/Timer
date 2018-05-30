@@ -73,14 +73,16 @@
     <Button
         android:id="@+id/go_timer_activity"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="463dp"
+        android:layout_height="wrap_content"
+
         android:background="@drawable/start_backgroun"
         android:text="Start"
         android:textColor="#ffffff"
         fab:layout_constraintBottom_toBottomOf="parent"
         fab:layout_constraintEnd_toEndOf="parent"
+        fab:layout_constraintHorizontal_bias="1.0"
         fab:layout_constraintStart_toStartOf="parent"
-        fab:layout_constraintTop_toTopOf="parent" />
+        fab:layout_constraintTop_toTopOf="parent"
+        fab:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>
